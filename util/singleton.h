@@ -118,7 +118,7 @@ pthread_once_t ThreadSingleton<TYPE>::Key_once = PTHREAD_ONCE_INIT;
 
 }  // end namespace
 
-using DOMOB_STL_CPP::ProcessSingleton;
-using DOMOB_STL_CPP::ThreadSingleton;
+using SELIB_UTIL::ProcessSingleton;
+using SELIB_UTIL::ThreadSingleton;
 
 #endif  

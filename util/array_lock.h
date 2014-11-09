@@ -21,8 +21,6 @@
 #include <pthread.h>
 #include "bit_array.h"
 
-#include "domob_log.h"
-
 namespace SELIB_UTIL {
 
 //
@@ -83,7 +81,7 @@ public:
 	  do {
 
 		if (!_ba.test_bit(pos)) {
-			DOMOB_WRITE_FATAL_LOG("lock err[lock is unlocked by other thread]");
+			SELIB_WRITE_FATAL_LOG("lock err[lock is unlocked by other thread]");
 			return false;
 		}
 
