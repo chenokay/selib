@@ -111,17 +111,23 @@ bool insert(unsigned long key, Type value, bool overwritten = true) {
 		}
 	} else {
 		LinkedHashEntry *entry = table[hash];
-		while (entry->getNext() != NULL) {
-			entry = entry->getNext();
+
+		while (entry != NULL) {
 
 			if (entry->getKey() == key) {
 				if (overwritten) {
 					entry->setValue(value);
-				}
+				}   
 
 				return true;
-			}
-		}
+			}   
+
+			if (NULL == entry->getNext()) {
+				break;
+			} else {
+				entry = entry->getNext();
+			}   
+		}   
 
 		LinkedHashEntry * nt = new (std::nothrow) LinkedHashEntry(key, value);
 		if (NULL == nt) {
