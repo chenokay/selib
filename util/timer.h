@@ -18,7 +18,6 @@
 
 namespace SELIB_UTIL {
 
-
 class Timer
 {
 	public:
