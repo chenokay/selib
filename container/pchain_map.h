@@ -89,7 +89,7 @@ private:
 	class AutoLock {
 		public:
 			AutoLock(uint32_t pos,
-					DOMOB_STL_CPP::ArrayLock * al) : _al(al), _pos(pos) 
+					SELIB_UTIL::ArrayLock * al) : _al(al), _pos(pos) 
 		{
 			if (NULL != _al) {
 				_al->lock(_pos);
@@ -102,12 +102,12 @@ private:
 				}
 			}
 		private:
-			DOMOB_STL_CPP::ArrayLock * _al;
+			SELIB_UTIL::ArrayLock * _al;
 			uint32_t _pos;
 	};
 
 	ChainHashMap<Type> _dict;
-	DOMOB_STL_CPP::ArrayLock _array_lock;
+	SELIB_UTIL::ArrayLock _array_lock;
 	uint32_t _bucket_num;
 };
 
