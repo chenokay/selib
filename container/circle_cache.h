@@ -131,7 +131,7 @@ list_node_t * _list;
 
 // the node to use 
 uint32_t _head;
-// latest unused one
+// least recently used one
 uint32_t _tail;
 
 uint32_t _hash_size;
@@ -174,7 +174,7 @@ uint32_t read_adjust(uint32_t index)
 
 	// read current index
 	// adjust tail value
-	if (_tail == index) {
+	if (_tail == index && _head != _list[index].next) {
 		_tail = _list[index].next;
 	}
 
