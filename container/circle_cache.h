@@ -19,8 +19,7 @@ int init(uint32_t capacity, uint32_t max_probing)
 	uint32_t hs = capacity * 2;
 	// use pow of 2 as bucket size inorder to compute 
 	// hash probing position
-	uint32_t _hash_size = pow(2, get_bit_pos(hs) + 1);
-	printf("hash bucket size:%u\n", _hash_size);
+	_hash_size = pow(2, get_bit_pos(hs) + 1);
 
 	_hash = new(std::nothrow) hash_node_t[_hash_size];
 	if (_hash == NULL) {
@@ -54,16 +53,15 @@ int init(uint32_t capacity, uint32_t max_probing)
 
 // if return is not null
 // destruct value buffer
-value_t * put(key_t k, value_t * v, bool overwrite = true)
+int put(key_t k, value_t * v, bool overwrite = true)
 {
 	uint32_t bucket = put_probing_bucket(k, overwrite);
 	if (bucket == INVALID_INDEX || bucket >= _hash_size) {
-		return NULL;
+		return -1;
 	}
 
 	uint32_t index = 0;
 	_hash[bucket].key = k; 
-	value_t * ret = NULL;
 
 	if (_hash[bucket].index != INVALID_INDEX &&
 			_list[_hash[bucket].index].key == k) {
@@ -78,12 +76,12 @@ value_t * put(key_t k, value_t * v, bool overwrite = true)
 
 	if (index == _head) {
 		// new node
-		ret = write_adjust(bucket);
+		 write_adjust(bucket);
 	} else {
 		read_adjust(index);
 	}
 
-	return ret;
+	return 0;
 }
 
 value_t * get(key_t k)
@@ -138,15 +136,13 @@ uint32_t _hash_size;
 uint32_t _capacity;
 uint32_t _max_probing;
 
-value_t * write_adjust(uint32_t bucket)
+int write_adjust(uint32_t bucket)
 {
-	value_t * rt = NULL;
 	// full, release tail node
 	if (_tail == _list[_head].next) {
 
 		_list[_tail].key = 0;
 		// delete value
-		rt = _list[_tail].v;
 		_list[_tail].v = NULL;
 		// delete information in hash
 		_hash[bucket].key = 0;
@@ -159,10 +155,10 @@ value_t * write_adjust(uint32_t bucket)
 		_head = _list[_head].next;
 	}
 
-	return rt;
+	return 0;
 }
 
-uint32_t read_adjust(uint32_t index)
+int read_adjust(uint32_t index)
 {
 	// del red node position
 	_list[_list[index].last].next = _list[index].next;
