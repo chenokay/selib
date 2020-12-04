@@ -2,6 +2,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <string>
 
 template<class VALUE>
 class LruCache {
@@ -19,7 +20,7 @@ int init(uint32_t capacity, uint32_t max_probing)
 	uint32_t hs = capacity * 2;
 	// use pow of 2 as bucket size inorder to compute 
 	// hash probing position
-	_hash_size = pow(2, get_bit_pos(hs) + 1);
+	_hash_size = static_cast<uint32_t>(pow(2, get_bit_pos(hs) + 1));
 
 	_hash = new(std::nothrow) hash_node_t[_hash_size];
 	if (_hash == NULL) {
@@ -53,15 +54,17 @@ int init(uint32_t capacity, uint32_t max_probing)
 
 // if return is not null
 // destruct value buffer
-int put(key_t k, value_t * v, bool overwrite = true)
+// use raw_key when application must have no collision 
+int put(key_t k, value_t * v, std::string& raw_key = "", bool overwrite = true)
 {
-	uint32_t bucket = put_probing_bucket(k, overwrite);
+	uint32_t bucket = put_probing_bucket(k, raw_key, overwrite);
 	if (bucket == INVALID_INDEX || bucket >= _hash_size) {
 		return -1;
 	}
 
 	uint32_t index = 0;
 	_hash[bucket].key = k; 
+	_hash[bucket].raw_key = raw_key; 
 
 	if (_hash[bucket].index != INVALID_INDEX &&
 			_list[_hash[bucket].index].key == k) {
@@ -73,6 +76,7 @@ int put(key_t k, value_t * v, bool overwrite = true)
 	_hash[bucket].index = index; 
 	_list[index].key = k;
 	_list[index].v = v;
+	_list[index].bucket = bucket;
 
 	if (index == _head) {
 		// new node
@@ -84,9 +88,9 @@ int put(key_t k, value_t * v, bool overwrite = true)
 	return 0;
 }
 
-value_t * get(key_t k)
+value_t * get(key_t k, std::string& raw_key = "")
 {
-	uint32_t bucket = get_probing_bucket(k);
+	uint32_t bucket = get_probing_bucket(k, raw_key);
 	if (bucket == INVALID_INDEX || bucket >= _hash_size) {
 		return NULL;
 	}
@@ -111,9 +115,11 @@ private:
 struct hash_node_t {
 	key_t key;
 	uint32_t index;
+	std::string raw_key;
 	hash_node_t() 
 	{
 		key = 0;
+		raw_key = "";
 		index = INVALID_INDEX;
 	}
 };
@@ -123,7 +129,16 @@ struct list_node_t {
 	key_t key;
 	uint32_t next;
 	uint32_t last;
+	uint32_t bucket;
 	value_t * v;
+	list_node_t ()
+	{
+		key = 0;
+		next = INVALID_INDEX;
+		last = INVALID_INDEX;
+		bucket = INVALID_INDEX;
+		v = NULL;
+	}
 };
 list_node_t * _list;
 
@@ -144,9 +159,11 @@ int write_adjust(uint32_t bucket)
 		_list[_tail].key = 0;
 		// delete value
 		_list[_tail].v = NULL;
+		uint32_t tail_bucket = _list[_tail].bucket;
 		// delete information in hash
-		_hash[bucket].key = 0;
-		_hash[bucket].index = INVALID_INDEX;
+		_hash[tail_bucket].key = 0;
+		_hash[tail_bucket].index = INVALID_INDEX;
+		_hash[tail_bucket].raw_key = "";
 
 		_head = _tail;
 		_tail = _list[_tail].next;
@@ -180,11 +197,11 @@ int read_adjust(uint32_t index)
 	return 0;
 }
 
-uint32_t get_probing_bucket(key_t key)
+uint32_t get_probing_bucket(key_t key, std::string& raw_key)
 {
 	for(int i = 0; i < _hash_size && i < _max_probing; ++i) {
 		uint32_t p = quadratic_probing(key, i);
-		if (_hash[p].key == key) {
+		if (_hash[p].key == key && _hash[p].raw_key == raw_key) {
 			return p;
 		}
 	}
@@ -193,14 +210,15 @@ uint32_t get_probing_bucket(key_t key)
 	return INVALID_INDEX;
 }
 
-uint32_t put_probing_bucket(key_t key, bool overwrite)
+uint32_t put_probing_bucket(key_t key, std::string& raw_key, bool overwrite)
 {
 	for(int i = 0; i < _hash_size && i < _max_probing; ++i) {
 		uint32_t p = quadratic_probing(key, i);
 		if (_hash[p].key == 0) {
 			return p;
 		}
-		if (_hash[p].key == key && overwrite) {
+		if (_hash[p].key == key && 
+				_hash[p].raw_key == raw_key && overwrite) {
 			return p;
 		}
 	}
@@ -213,7 +231,7 @@ uint32_t quadratic_probing(key_t key, uint32_t i)
 {
 	// parameter all are 0.5
 	// a % b, if b is pow of 2, it's eqeual with a & (b - 1)
-	uint32_t probing_offset = 0.5*i + 0.5*i*i;
+	uint32_t probing_offset = static_cast<uint32_t>(0.5*i + 0.5*i*i);
 	return ( ((key & (_hash_size - 1)) + probing_offset ) & (_hash_size - 1) );
 }
 
