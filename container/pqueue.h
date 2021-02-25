@@ -42,7 +42,8 @@ public:
 	int reserve(uint32_t len)
 	{
 		this->length = len;
-		return 0;}
+		return 0;
+	}
 
 	int flush()
 	{

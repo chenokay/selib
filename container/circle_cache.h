@@ -1,9 +1,16 @@
+// a light-weight LRU cache which store value in circle
+// list buffer, and find value in open address hash
+
+#ifndef CIRCLE_CACHE_H
+#define CIRCLE_CACHE_H
+
 #include <new>
 #include <math.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string>
 
+namespace SELIB_UTIL {
 template<class VALUE>
 class LruCache {
 public:
@@ -248,3 +255,6 @@ int get_bit_pos(uint32_t v)
 }
 };
 
+}
+
+#endif
