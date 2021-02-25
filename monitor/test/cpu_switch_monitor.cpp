@@ -19,7 +19,7 @@ void *routine(void *arg)
 int main()
 {
 	CpuLoad::start();
-	static const int THREADS = 500;
+	static const int THREADS = 50;
 
 	pthread_t tid[THREADS];
 

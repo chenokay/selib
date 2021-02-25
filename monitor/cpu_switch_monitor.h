@@ -113,8 +113,7 @@ class CpuLoad
 			uint32_t cur = 0;
 			Timer tm;
 			while (cl->run()) {
-				//int us = rand_r(&(cl->_seed)) % MAX_SLEEP_US;
-				int us = 1;
+				int us = rand_r(&(cl->_seed)) % MAX_SLEEP_US;
 				tm.restart();
 				usleep(us);
 				int consume_us = tm.usec_elapsed();
