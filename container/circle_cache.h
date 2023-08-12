@@ -25,7 +25,7 @@ int init(uint32_t capacity, uint32_t max_probing)
 	_max_probing = max_probing;
 	// two times bucket size for cache list capacity
 	uint32_t hs = capacity * 2;
-	// use pow of 2 as bucket size inorder to compute 
+	// use pow of 2 as bucket size in order to compute 
 	// hash probing position
 	_hash_size = static_cast<uint32_t>(pow(2, get_bit_pos(hs) + 1));
 
