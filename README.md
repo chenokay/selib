@@ -43,6 +43,8 @@ container:
 	chain_hash.h : a chain hash
  
 	circle_cache.h : circle buffer cache
+ ![image](https://github.com/chenokay/selib/assets/8099748/1d0c4d7a-f4e5-4802-b53b-e1ae8563efde)
+
  
 	dict_container.h : two buffer dict container which can manage all kinds of dict
  
