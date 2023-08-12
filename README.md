@@ -7,6 +7,7 @@ CONTENT
 
 util:
 	bit_array.h : bit map, a great number of count but only two value in one position
+ 
 	arrary_lock.h : amount of lock with bit flag
 	lifo.h && lifo.hpp : a stack for thread safety under read and write
 	autolock.h : a lock with RAII mechanism based on type
