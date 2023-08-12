@@ -52,6 +52,8 @@ container:
 
 framework:
 	hining_pool.h : a input queue and output queu with threads to process
+ 
 	dict_manager.* : manager all kinds of dict
+ 
 
 ml_util: machine learning util
