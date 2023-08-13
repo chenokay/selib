@@ -201,8 +201,7 @@ int print_node(tree* n)
     int global_level = 1;
     s[global_level].push(node_level_t(p, 1));
     for (;!s[global_level].empty() && global_level <= 128;) {
-        nl = s.front();
-        s.pop();
+        nl = s[global_level].pop();
         nl->print();
         if (nl->level % 2 == 0) {
             if (NULL != nl->node->left) {
