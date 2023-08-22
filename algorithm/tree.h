@@ -227,4 +227,30 @@ int print_node(tree* n)
     return 0;
 }
 
+// 镜像
+int print_note(tree* n)
+{
+    if (NULL == n) {
+        return -1;
+    }
 
+    Stack s;
+    tree* p = n;
+    s.push(p);
+
+    for (;!s.empty();) {
+        p = s.pop();
+        tree* tmp = p->left;
+        p->left = p->right;
+        p->right = tmp;
+
+        if (NULL != p->left) {
+            s.push(p->left);
+        }
+        if (NULL != p->right) {
+            s.push(p->right);
+        }
+    }
+
+    return 0;
+}
